@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Be My Valentine 💖</title>
+
+<style>
+    body {
+        margin: 0;
+        height: 100vh;
+        background: #f9f9f7; /* MATCHES VIDEO BG */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Comic Sans MS', 'Poppins', cursive;
+        text-align: center;
+        overflow: hidden;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 420px;
+        padding: 20px;
+    }
+
+    h1 {
+        color: #ff4d88;
+        font-size: clamp(22px, 6vw, 32px);
+        min-height: 90px;
+    }
+
+.media {
+    width: 370px;
+    height: 286px;
+
+    object-fit: cover;
+    background-color: #f9f9f7;
+
+    /* IMPORTANT PART */
+    transform: translateX(-6px) scale(1.05);
+
+    border: none;
+    outline: none;
+    display: block;
+    margin: 0 auto 20px;
+}
+
+/* Mobile */
+@media (max-width: 420px) {
+    .media {
+        width: 90vw;
+        height: calc(90vw * 286 / 370);
+        transform: translateX(-2vw) scale(1.05);
+    }
+}
+
+
+
+
+    .buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        align-items: center;
+        margin-top: 25px;
+    }
+
+    button {
+        padding: 16px 36px;
+        font-size: 18px;
+        border-radius: 40px;
+        border: none;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+
+    .yes {
+        background: #ff4d88;
+        color: white;
+    }
+
+    .no {
+        background: #eee;
+        color: #555;
+    }
+
+    .countdown {
+        font-size: 48px;
+        color: #ff4d88;
+        margin-top: 10px;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container" id="page"></div>
+
+<script>
+let noClicks = 0;
+let yesScale = 1;
+
+const noTexts = [
+    "Are you sure? 🥺",
+    "Really sure?? 😢",
+    "Think again 💔",
+    "Pleaseee 😭",
+    "Don’t do this 😖",
+    "You’re teasing me 😩"
+];
+
+// typing effect
+function typeText(el, text, callback) {
+    let i = 0;
+    el.innerHTML = "";
+    const interval = setInterval(() => {
+        el.innerHTML += text.charAt(i);
+        i++;
+        if (i === text.length) {
+            clearInterval(interval);
+            if (callback) callback();
+        }
+    }, 70);
+}
+
+// generic page renderer
+function showPage(mediaHTML, text, buttonsHTML) {
+    page.innerHTML = `
+        ${mediaHTML}
+        <h1 id="typing"></h1>
+        <div class="buttons" id="buttons" style="display:none;">
+            ${buttonsHTML}
+        </div>
+    `;
+
+    typeText(
+        document.getElementById("typing"),
+        text,
+        () => document.getElementById("buttons").style.display = "flex"
+    );
+}
+
+/* PAGE 1 – GIF */
+showPage(
+    `<img src="show this in first page.gif" class="media" alt="teddy">`,
+    "I know I’m already yours… but I still want to ask you something 💕",
+    `<button class="yes" onclick="curiosity()">Next ➜</button>`
+);
+
+/* PAGE 2 */
+function curiosity() {
+    showPage(
+        `<img src="show this in first page.gif" class="media" alt="teddy">`,
+        "Before I ask… promise you won’t laugh? 😳💗",
+        `<button class="yes" onclick="countdown()">I promise 🤞</button>`
+    );
+}
+
+/* PAGE 3 – countdown */
+function countdown() {
+    page.innerHTML = `
+        <img src="show this in first page.gif" class="media" alt="teddy">
+        <h1 id="typing"></h1>
+        <div class="countdown" id="count">5</div>
+    `;
+
+    typeText(document.getElementById("typing"), "Okay… here we go 😳");
+
+    let time = 5;
+    const interval = setInterval(() => {
+        time--;
+        document.getElementById("count").innerText = time;
+        if (time === 0) {
+            clearInterval(interval);
+            questionPage();
+        }
+    }, 1000);
+}
+
+/* PAGE 4 – QUESTION VIDEO */
+function questionPage() {
+    showPage(
+        `<video class="media" autoplay muted loop playsinline>
+            <source src="show this in the question wil u be my val.mp4" type="video/mp4">
+        </video>`,
+        "Will you be my Valentine? 💘",
+        `
+        <button class="yes" id="yesBtn" onclick="yes()">YES 💖</button>
+        <button class="no" id="noBtn" onclick="no()">NO 😭</button>
+        `
+    );
+}
+
+function no() {
+    noClicks++;
+
+    const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
+
+    noBtn.innerText = noTexts[noClicks % noTexts.length];
+
+    const noScale = Math.max(0.4, 1 - noClicks * 0.12);
+    yesScale = Math.min(2.3, yesScale + 0.15);
+
+    noBtn.style.transform = `scale(${noScale})`;
+    yesBtn.style.transform = `scale(${yesScale})`;
+}
+
+/* FINAL – YES VIDEO */
+function yes() {
+    page.innerHTML = `
+        <video class="media" autoplay muted playsinline>
+            <source src="show this when she says yes .mp4" type="video/mp4">
+        </video>
+        <h1>YAYYYYY!! 💖🥰</h1>
+        <p>You just made my heart melt 💕</p>
+    `;
+}
+</script>
+
+</body>
+</html>
